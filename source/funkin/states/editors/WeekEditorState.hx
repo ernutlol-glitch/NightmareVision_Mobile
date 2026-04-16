@@ -105,6 +105,9 @@ class WeekEditorState extends MusicBeatState
 		reloadAllShit();
 		
 		FlxG.mouse.visible = true;
+
+        addTouchPad("UP_DOWN", "B");
+        addTouchPadCamera();
 		
 		super.create();
 	}
@@ -491,7 +494,7 @@ class WeekEditorState extends MusicBeatState
 			FlxG.sound.volumeDownKeys = ClientPrefs.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = ClientPrefs.volumeUpKeys;
 			
-			if (FlxG.keys.justPressed.ESCAPE)
+			if (FlxG.keys.justPressed.ESCAPE || touchPad.buttonB.justPressed)
 			{
 				FlxG.switchState(funkin.states.editors.MasterEditorMenu.new);
 				FunkinSound.playMusic(Paths.music('freakyMenu'));
@@ -680,6 +683,10 @@ class WeekEditorFreeplayState extends MusicBeatState
 		
 		addEditorBox();
 		changeSelection();
+
+        addTouchPad("UP_DOWN", "B");
+        addTouchPadCamera();
+
 		super.create();
 	}
 	
@@ -878,7 +885,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 			FlxG.sound.muteKeys = ClientPrefs.muteKeys;
 			FlxG.sound.volumeDownKeys = ClientPrefs.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = ClientPrefs.volumeUpKeys;
-			if (FlxG.keys.justPressed.ESCAPE)
+			if (FlxG.keys.justPressed.ESCAPE || touchPad.buttonB.justPressed)
 			{
 				FlxG.switchState(funkin.states.editors.MasterEditorMenu.new);
 				FunkinSound.playMusic(Paths.music('freakyMenu'));

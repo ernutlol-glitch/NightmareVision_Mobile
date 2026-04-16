@@ -455,6 +455,9 @@ class OLDChartEditorState extends MusicBeatState
 		lastSong = currentSongName;
 		
 		updateGrid();
+
+        addTouchPad("LEFT_FULL", "A_B_C_D_V_X_Y_Z");
+        addTouchPadCamera();
 		
 		super.create();
 	}
@@ -2220,7 +2223,7 @@ class OLDChartEditorState extends MusicBeatState
 				];
 			}
 			
-			if (FlxG.keys.justPressed.ENTER)
+			if (FlxG.keys.justPressed.ENTER || touchPad.buttonA.justPressed)
 			{
 				enterSong();
 			}
@@ -2234,7 +2237,7 @@ class OLDChartEditorState extends MusicBeatState
 				changeNoteSustain(-Conductor.stepCrotchet);
 			}
 			
-			if (FlxG.keys.justPressed.BACKSPACE)
+			if (FlxG.keys.justPressed.BACKSPACE || touchPad.buttonB.justPressed)
 			{
 				PlayState.chartingMode = false;
 				FlxG.switchState(funkin.states.editors.MasterEditorMenu.new);
@@ -2243,17 +2246,17 @@ class OLDChartEditorState extends MusicBeatState
 				return;
 			}
 			
-			if (FlxG.keys.justPressed.Z && FlxG.keys.pressed.CONTROL)
+			if (FlxG.keys.justPressed.Z || touchPad.buttonV.justPressed && FlxG.keys.pressed.CONTROL)
 			{
 				undo();
 			}
 			
-			if (FlxG.keys.justPressed.Z && curZoom > 0 && !FlxG.keys.pressed.CONTROL)
+			if (FlxG.keys.justPressed.Z || touchPad.buttonV.justPressed && curZoom > 0 && !FlxG.keys.pressed.CONTROL)
 			{
 				--curZoom;
 				updateZoom();
 			}
-			if (FlxG.keys.justPressed.X && curZoom < zoomList.length - 1)
+			if (FlxG.keys.justPressed.X || touchPad.buttonD.justPressed && curZoom < zoomList.length - 1)
 			{
 				curZoom++;
 				updateZoom();
@@ -2285,7 +2288,7 @@ class OLDChartEditorState extends MusicBeatState
 				}
 			}
 			
-			if (FlxG.keys.justPressed.SPACE && FlxG.sound.music.time < (FlxG.sound.music.length - endOffset)) togglePause();
+			if (FlxG.keys.justPressed.SPACE || touchPad.buttonY.justPressed && FlxG.sound.music.time < (FlxG.sound.music.length - endOffset)) togglePause();
 			
 			if (!FlxG.keys.pressed.ALT && FlxG.keys.justPressed.R)
 			{
@@ -2304,19 +2307,19 @@ class OLDChartEditorState extends MusicBeatState
 			
 			// ARROW VORTEX SHIT NO DEADASS
 			
-			if (FlxG.keys.pressed.W || FlxG.keys.pressed.S)
+			if (FlxG.keys.pressed.W || FlxG.keys.pressed.S || touchPad.buttonUp.pressed || touchPad.buttonDown.justPressed)
 			{
 				resetLittleFriends();
 				toggleMusic(false);
 				
 				var holdingShift:Float = 1;
 				if (FlxG.keys.pressed.CONTROL) holdingShift = 0.25;
-				else if (FlxG.keys.pressed.SHIFT) holdingShift = 4;
+				else if (FlxG.keys.pressed.SHIFT || touchPad.buttonX.pressed) holdingShift = 4;
 				
 				var daTime:Float = 700 * FlxG.elapsed * holdingShift;
 				resetLittleFriends();
 				
-				if (FlxG.keys.pressed.W)
+				if (FlxG.keys.pressed.W || touchPad.buttonUp.pressed)
 				{
 					if (FlxG.sound.music.time - daTime < 0) changeSection(-1);
 					else FlxG.sound.music.time -= daTime;
@@ -2348,8 +2351,13 @@ class OLDChartEditorState extends MusicBeatState
 				quant.animation.play('q', true, false, curQuant);
 			}
 			
-			if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.DOWN) scrollQuantized(FlxG.keys.justPressed.UP);
-			
+            var up = FlxG.keys.justPressed.UP || touchPad.buttonUp.justPressed;
+            var down = FlxG.keys.justPressed.DOWN || touchPad.buttonDown.justPressed;
+
+            if (up || down) {
+             scrollQuantized(up);
+            }
+
 			var style = currentType;
 			
 			if (FlxG.keys.pressed.SHIFT)
@@ -2358,10 +2366,10 @@ class OLDChartEditorState extends MusicBeatState
 			}
 			
 			var shiftThing:Int = 1;
-			if (FlxG.keys.pressed.SHIFT) shiftThing = 4;
+			if (FlxG.keys.pressed.SHIFT || touchPad.buttonC.pressed) shiftThing = 4;
 			
-			if (FlxG.keys.justPressed.D) changeSection(curSec + shiftThing);
-			if (FlxG.keys.justPressed.A) changeSection(curSec - shiftThing);
+			if (FlxG.keys.justPressed.D || touchPad.buttonRight.justPressed) changeSection(curSec + shiftThing);
+			if (FlxG.keys.justPressed.A || touchPad.buttonLeft.justPressed) changeSection(curSec - shiftThing);
 			
 			if (vortex && !blockInput)
 			{

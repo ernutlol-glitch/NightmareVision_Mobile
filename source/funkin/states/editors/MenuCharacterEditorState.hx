@@ -70,6 +70,9 @@ class MenuCharacterEditorState extends MusicBeatState
 		addEditorBox();
 		FlxG.mouse.visible = true;
 		updateCharTypeBox();
+
+        addTouchPad("MENU_CHARACTER", "MENU_CHARACTER");
+        addTouchPadCamera();
 		
 		super.create();
 	}
@@ -298,37 +301,37 @@ class MenuCharacterEditorState extends MusicBeatState
 			FlxG.sound.muteKeys = ClientPrefs.muteKeys;
 			FlxG.sound.volumeDownKeys = ClientPrefs.volumeDownKeys;
 			FlxG.sound.volumeUpKeys = ClientPrefs.volumeUpKeys;
-			if (FlxG.keys.justPressed.ESCAPE)
+			if (FlxG.keys.justPressed.ESCAPE || touchPad.buttonB.justPressed)
 			{
 				FlxG.switchState(funkin.states.editors.MasterEditorMenu.new);
 				FunkinSound.playMusic(Paths.music('freakyMenu'));
 			}
 			
 			var shiftMult:Int = 1;
-			if (FlxG.keys.pressed.SHIFT) shiftMult = 10;
+			if (FlxG.keys.pressed.SHIFT || touchPad.buttonA.pressed) shiftMult = 10;
 			
-			if (FlxG.keys.justPressed.LEFT)
+			if (FlxG.keys.justPressed.LEFT || touchPad.buttonLeft.justPressed)
 			{
 				characterFile.position[0] += shiftMult;
 				updateOffset();
 			}
-			if (FlxG.keys.justPressed.RIGHT)
+			if (FlxG.keys.justPressed.RIGHT || touchPad.buttonRight.justPressed)
 			{
 				characterFile.position[0] -= shiftMult;
 				updateOffset();
 			}
-			if (FlxG.keys.justPressed.UP)
+			if (FlxG.keys.justPressed.UP || touchPad.buttonUp.justPressed)
 			{
 				characterFile.position[1] += shiftMult;
 				updateOffset();
 			}
-			if (FlxG.keys.justPressed.DOWN)
+			if (FlxG.keys.justPressed.DOWN || touchPad.buttonDown.justPressed)
 			{
 				characterFile.position[1] -= shiftMult;
 				updateOffset();
 			}
 			
-			if (FlxG.keys.justPressed.SPACE && curTypeSelected == 1)
+			if (FlxG.keys.justPressed.SPACE || touchPad.buttonC.justPressed && curTypeSelected == 1)
 			{
 				grpWeekCharacters.members[curTypeSelected].animation.play('confirm', true);
 			}
