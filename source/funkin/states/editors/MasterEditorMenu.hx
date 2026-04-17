@@ -123,8 +123,24 @@ class MasterEditorMenu extends MusicBeatState
 					openSubState(new SongMetaEditor());
 				case 'Menu Character Editor':
 					FlxG.switchState(() -> new MenuCharacterEditorState());
-				case 'Chart Editor': // felt it would be cool maybe
-                    FlxG.switchState(OLDChartEditorState.new);
+				case 'Chart Editor':
+                    if (PlayState.SONG == null)
+                    {
+                       var songName:String = 'test';
+                       var diff:String = 'normal';
+                                                            
+                       try {
+                            PlayState.SONG = Song.loadFromJson(diff, songName);
+                        } catch(e) {
+                            PlayState.SONG = ChartEditorState.getDefaultSong();
+                        }
+
+                        ChartEditorState.song = PlayState.SONG;
+
+                        if (FlxG.sound.music != null) FlxG.sound.music.stop();
+                                            
+                        FlxG.switchState(() -> new OLDChartEditorState());
+                    }
 				// case 'Note Skin Editor':
 				// 	FlxG.switchState(() -> new NoteSkinEditor('default'));
 				case 'Chart Converter':
