@@ -90,29 +90,31 @@ class FileUtil
 
     static function fixAndroidPath(path:String):String
     {
-        if (path == null) return null;
+        if (path == null) return path;
 
         if (path.startsWith("content://"))
         {
             var bytes = null;
 
             try {
-                    bytes = lime.utils.Bytes.fromFile(path);
-            } catch (e)
-            {
-                trace("Error reading URI: " + e);         
+                bytes = lime.utils.Bytes.fromFile(path);
+            } catch (e) {
+                trace("Error reading URI: " + e);
             }
 
             if (bytes == null)
-                throw "Cannot read URI: " + path;
-            
+                return path; 
+
             var out = lime.system.System.applicationStorageDirectory
             + "/cache_" + haxe.crypto.Md5.encode(path) + ".json";
-        }
+
+            sys.io.File.saveBytes(out, bytes);
+            return out;
+            }
 
         return path;
     }
-	
+                                 
 	public static function saveFileToPath(data:Dynamic, path:String, ensureDirectory:Bool = true):Bool
 	{
 		try
