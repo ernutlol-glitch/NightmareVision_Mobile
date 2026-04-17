@@ -88,7 +88,7 @@ class FileUtil
 		}, filters, fileName);
 	}
 
-    static function fixAndroidPath(path:String):String
+    public static function fixAndroidPath(path:String):String
     {
         if (path == null) return path;
 

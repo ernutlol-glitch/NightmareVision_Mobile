@@ -541,7 +541,7 @@ class WeekEditorState extends MusicBeatState
 		
 		if (fullPath != null)
 		{
-			var rawJson:String = FileUtil.readFileSafe(path);
+			var rawJson:String = FileUtil.readFileSafe(fullPath);
 			if (rawJson != null)
 			{
 				loadedWeek = cast Json.parse(rawJson);

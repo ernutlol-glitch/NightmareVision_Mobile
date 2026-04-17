@@ -378,7 +378,7 @@ class MenuCharacterEditorState extends MusicBeatState
 		
 		if (fullPath != null)
 		{
-			var rawJson:String = FileUtil.readFileSafe(path);
+			var rawJson:String = FileUtil.readFileSafe(fullPath);
 			if (rawJson != null)
 			{
 				var loadedChar:MenuCharacterFile = cast Json.parse(rawJson);
