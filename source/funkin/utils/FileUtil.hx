@@ -105,7 +105,7 @@ class FileUtil
             if (bytes == null)
                 return path; 
 
-            var out = lime.system.System.applicationStorageDirectory
+            var out = StorageUtil.getStorageDirectory()
             + "/cache_" + haxe.crypto.Md5.encode(path) + ".json";
 
             sys.io.File.saveBytes(out, bytes);
