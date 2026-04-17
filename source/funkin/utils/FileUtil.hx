@@ -31,7 +31,7 @@ class FileUtil
 		FileDialog.openFile(FlxG.stage.window, title, (files, filter) -> {
 			if (files != null && files.length > 0)
 			{
-				if (onSelect != null) onSelect(files[0]);
+				if (onSelect != null) onSelect(fixAndroidPath(files[0]));
 			}
 			else
 			{
@@ -49,7 +49,12 @@ class FileUtil
 		FileDialog.openFile(FlxG.stage.window, title, (files, filter) -> {
 			if (files != null && files.length > 0)
 			{
-				if (onSelect != null) onSelect(files);
+				if (onSelect != null)
+                {
+                    var fixed = [];
+                    for (f in files) fixed.push(fixAndroidPath(f));
+                    onSelect(fixed);
+                }
 			}
 			else
 			{
@@ -82,6 +87,35 @@ class FileUtil
 			}
 		}, filters, fileName);
 	}
+
+    static function fixAndroidPath(path:String):String
+    {
+        if (path == null) return null;
+
+        if (path.startsWith("content://"))
+        {
+            var bytes = null;
+
+            try {
+                    bytes = lime.utils.Bytes.fromFile(path);
+            } catch (e)
+            {
+                trace("Error reading URI: " + e);         
+            }
+
+            if (bytes == null)
+                throw "Cannot read URI: " + path;
+            
+
+             var out = lime.system.System.applicationStorageDirectory
+             + "/cache_" + path.hashCode() + ".json";
+
+            sys.io.File.saveBytes(out, bytes);
+            return out;
+         }
+
+        return path;
+    }
 	
 	public static function saveFileToPath(data:Dynamic, path:String, ensureDirectory:Bool = true):Bool
 	{
