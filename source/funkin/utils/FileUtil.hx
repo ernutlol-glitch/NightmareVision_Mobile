@@ -107,8 +107,8 @@ class FileUtil
                 throw "Cannot read URI: " + path;
             
 
-             var out = lime.system.System.applicationStorageDirectory
-             + "/cache_" + path.hashCode() + ".json";
+            var out = lime.system.System.applicationStorageDirectory
+            "/cache_" + haxe.crypto.Md5.encode(path) + ".json";
 
             sys.io.File.saveBytes(out, bytes);
             return out;
