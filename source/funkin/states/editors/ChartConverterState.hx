@@ -154,24 +154,24 @@ class ChartConverterState extends MusicBeatState
 					
 					var pathToMeta:Null<String> = null;
 					
-				    files.filter(f -> f.toLowerCase().contains("chart"))
-					{
-						if (pathToChart == null)
-						{
-							pathToChart = i;
-							break;
-						}
-					}
-					
-					files.filter(f -> f.toLowerCase().contains("metadata"))
-					{
-						if (pathToMeta == null)
-						{
-							pathToMeta = i;
-							break;
-						}
-					}
-					
+                    for (i in files.filter(f -> f.toLowerCase().contains("chart")))
+                    {
+                        if (pathToChart == null)
+                        {
+                            pathToChart = i;
+                             break;
+                        }
+                    }
+
+                    for (i in files.filter(f -> f.toLowerCase().contains("metadata")))
+                    {
+                        if (pathToMeta == null)
+                        {
+                            pathToMeta = i;
+                            break;
+                        }
+                    }                                                                
+                    
 					if (pathToChart != null && pathToMeta != null)
 					{
 						try
@@ -211,24 +211,24 @@ class ChartConverterState extends MusicBeatState
 					
 					var pathToMeta:Null<String> = null;
 					
-					files.filter(f -> !f.toLowerCase().contains("meta"))
-					{
-						if (pathToChart == null)
-						{
-							pathToChart = i;
-							break;
-						}
-					}
-					
-					files.filter(f -> f.toLowerCase().contains("meta"))
-					{
-						if (pathToMeta == null)
-						{
-							pathToMeta = i;
-							break;
-						}
-					}
-					
+                    for (i in files.filter(f -> !f.toLowerCase().contains("meta")))
+                    {
+                        if (pathToChart == null)
+                        {
+                            pathToChart = i;
+                            break;
+                        }
+                    }
+
+                    for (i in files.filter(f -> f.toLowerCase().contains("meta")))
+                    {
+                        if (pathToMeta == null)
+                        {
+                             pathToMeta = i;
+                             break;
+                         }
+                    }
+            
 					if (pathToChart != null && pathToMeta != null)
 					{
 						try
