@@ -144,11 +144,13 @@ class SongMetaEditor extends UISubState
 	
 	function loadMeta(file:String)
 	{
-		if (!FunkinAssets.exists(file)) return;
+        var fixed = FileUtil.fixAndroidPath(file);
+        if (fixed == null) return;
+
+        if (!FunkinAssets.exists(fixed)) return;
 		
-		var meta = SongMeta.getFromPath(file);
-		
-		if (meta == null) return;
+		var meta = SongMeta.getFromPath(fixed);
+        if (meta == null) return;
 		
 		ToolKitUtils.playSfx(CONFIRM);
 		

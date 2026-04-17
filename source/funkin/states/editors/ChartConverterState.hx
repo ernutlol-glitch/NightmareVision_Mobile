@@ -154,7 +154,7 @@ class ChartConverterState extends MusicBeatState
 					
 					var pathToMeta:Null<String> = null;
 					
-					for (i in files.filter((f) -> f.contains('chart')))
+				    files.filter(f -> f.toLowerCase().contains("chart"))
 					{
 						if (pathToChart == null)
 						{
@@ -163,7 +163,7 @@ class ChartConverterState extends MusicBeatState
 						}
 					}
 					
-					for (i in files.filter((f) -> f.contains('metadata')))
+					files.filter(f -> f.toLowerCase().contains("metadata"))
 					{
 						if (pathToMeta == null)
 						{
@@ -211,7 +211,7 @@ class ChartConverterState extends MusicBeatState
 					
 					var pathToMeta:Null<String> = null;
 					
-					for (i in files.filter((f) -> !f.contains('meta')))
+					files.filter(f -> !f.toLowerCase().contains("meta"))
 					{
 						if (pathToChart == null)
 						{
@@ -220,7 +220,7 @@ class ChartConverterState extends MusicBeatState
 						}
 					}
 					
-					for (i in files.filter((f) -> f.contains('meta')))
+					files.filter(f -> f.toLowerCase().contains("meta"))
 					{
 						if (pathToMeta == null)
 						{

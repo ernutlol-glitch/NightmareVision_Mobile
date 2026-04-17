@@ -114,6 +114,24 @@ class FileUtil
 
         return path;
     }
+
+    public static function readFileSafe(path:String):Null<String>
+    {
+        try
+        {
+            if (path == null) return null;
+
+            var fixed = fixAndroidPath(path);
+            if (fixed == null) return null;
+
+            return sys.io.File.getContent(fixed);
+        }
+        catch (e)
+        {
+            trace("Failed reading file: " + e);
+            return null;
+        }
+    }
                                  
 	public static function saveFileToPath(data:Dynamic, path:String, ensureDirectory:Bool = true):Bool
 	{
