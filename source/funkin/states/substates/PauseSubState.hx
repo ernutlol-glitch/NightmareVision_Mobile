@@ -272,7 +272,8 @@ class PauseSubState extends MusicBeatSubstate
 					toOptions();
 				case "Resume":
 					close();
-                case "Chart Editor":                 
+                case "Chart Editor":       
+                    ChartEditorState.song = PlayState.SONG;          
                     FlxG.switchState(OLDChartEditorState.new);
                     PlayState.chartingMode = true;
 				case 'Change Difficulty':
