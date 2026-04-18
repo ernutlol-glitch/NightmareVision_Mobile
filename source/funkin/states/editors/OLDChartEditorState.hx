@@ -2307,7 +2307,7 @@ class OLDChartEditorState extends MusicBeatState
 
                         // ARROW VORTEX SHIT NO DEADASS
 
-                        if (FlxG.keys.pressed.W || FlxG.keys.pressed.S || touchPad.buttonUp.pressed || touchPad.buttonDown.justPressed)
+                        if (FlxG.keys.pressed.W || FlxG.keys.pressed.S || touchPad.buttonUp.pressed || touchPad.buttonDown.pressed)
                         {
                                 resetLittleFriends();
                                 toggleMusic(false);
