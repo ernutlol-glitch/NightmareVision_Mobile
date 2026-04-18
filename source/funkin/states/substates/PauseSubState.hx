@@ -25,6 +25,7 @@ import funkin.objects.*;
 import funkin.scripts.*;
 
 import funkin.states.editors.OLDChartEditorState;
+import funkin.states.editors.ChartEditorState;
 
 class PauseSubState extends MusicBeatSubstate
 {
