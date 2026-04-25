@@ -97,22 +97,22 @@ class Controls extends FlxActionSet
 	{
 		instance = new Controls('player', Solo);
 		for (id in 0...FlxG.gamepads.numActiveGamepads)
-        {
-            if (FlxG.gamepads.getByID(id) != null) instance.addDefaultGamepad(id);
-        }
-        FlxG.gamepads.deviceConnected.add(gamepadConnected);
-        FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
-    }
-    	
-    static function gamepadConnected(gamepad:FlxGamepad)
-    {
-        instance.addDefaultGamepad(gamepad.id);
-    }
-                	
-    static function gamepadDisconnected(gamepad:FlxGamepad)
-    {
-        instance.removeGamepad(gamepad.id);
-    }
+		{
+			if (FlxG.gamepads.getByID(id) != null) instance.addDefaultGamepad(id);
+		}
+		FlxG.gamepads.deviceConnected.add(gamepadConnected);
+		FlxG.gamepads.deviceDisconnected.add(gamepadDisconnected);
+	}
+	
+	static function gamepadConnected(gamepad:FlxGamepad)
+	{
+		instance.addDefaultGamepad(gamepad.id);
+	}
+	
+	static function gamepadDisconnected(gamepad:FlxGamepad)
+	{
+		instance.removeGamepad(gamepad.id);
+	}
 	
 	var _ui_up = new FlxActionDigital(Action.UI_UP);
 	var _ui_left = new FlxActionDigital(Action.UI_LEFT);
@@ -613,7 +613,7 @@ class Controls extends FlxActionSet
 	
 	public function addDefaultGamepad(id):Void
 	{
-        var binds = ClientPrefs.gamepadBinds;
+		var binds = ClientPrefs.gamepadBinds;
 		addGamepadLiteral(id, [
 			Control.ACCEPT => [FlxGamepadInputID.ACCEPT],
 			Control.BACK => [CANCEL],
@@ -624,7 +624,7 @@ class Controls extends FlxActionSet
 			Control.NOTE_UP => binds.get(Action.NOTE_UP),
 			Control.NOTE_DOWN => binds.get(Action.NOTE_DOWN),
 			Control.NOTE_LEFT => binds.get(Action.NOTE_LEFT),
-			Control.NOTE_RIGHT => binds.get(Action.NOGE_RIGHT),
+			Control.NOTE_RIGHT => binds.get(Action.NOTE_RIGHT),
 			Control.PAUSE => [START],
 			Control.RESET => [8]
 		]);
