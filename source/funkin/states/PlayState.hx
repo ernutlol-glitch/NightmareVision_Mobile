@@ -44,7 +44,8 @@ import funkin.states.editors.*;
 import funkin.game.modchart.*;
 import funkin.game.StoryMeta;
 import funkin.game.Countdown;
-import funkin.backend.InputSystem;
+import funkin.input.InputSystem;
+import funkin.input.InputEvent;
 import funkin.audio.SyncedFlxSoundGroup;
 #if VIDEOS_ALLOWED
 import funkin.video.FunkinVideoSprite;
@@ -53,10 +54,7 @@ import funkin.mobile.TouchButton;
 import funkin.mobile.input.MobileInputID;
 
 class PlayState extends MusicBeatState
-{
-	public static var STRUM_X:Float = 42; // redundant
-	public static var STRUM_X_MIDDLESCROLL:Float = -278; // redundant
-	
+{	
 	public static var meta:Null<SongMetaData> = null; // bad?
 	
 	public static var SONG:Null<Song> = null;
@@ -64,9 +62,6 @@ class PlayState extends MusicBeatState
 	public static var storyMeta:StoryMeta = new StoryMeta();
 	
 	public static var isStoryMode:Bool = false;
-	
-	// how big to stretch the pixel art assets
-	public static var daPixelZoom:Float = 6;
 	
 	/**
 	 * Static reference to the state. used for other classes to reference
@@ -617,14 +612,7 @@ class PlayState extends MusicBeatState
 		debugKeysChart = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
 		debugKeysCharacter = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_2'));
 		PauseSubState.songName = null; // Reset to default
-		
-		keysArray = [
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_left')),
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_down')),
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_up')),
-			ClientPrefs.copyKey(ClientPrefs.keyBinds.get('note_right'))
-		];
-		
+				
 		songStartCallback = startCountdown;
 		songEndCallback = endSong;
 		
@@ -809,12 +797,9 @@ class PlayState extends MusicBeatState
 		touchPad.visible = true;
 		#end
 		addMobileControls();
-		if (!ClientPrefs.controllerMode)
-		{
-		    mobileControls.onButtonDown.add(onButtonPress);
-		    mobileControls.onButtonUp.add(onButtonRelease);
-		}
-		
+        mobileControls.onButtonDown.add(onButtonPress);
+        mobileControls.onButtonUp.add(onButtonRelease);
+
 		if (genNotesBeforeCountdown) generatePlayfields();
 		generateSong(SONG.song);
 		
@@ -860,9 +845,11 @@ class PlayState extends MusicBeatState
 		// Updating Discord Rich Presence.
 		resetDiscordRPC();
 		
-		input = new InputSystem(onKeyPress, onKeyRelease, keysArray);
-		
-		if (!ClientPrefs.controllerMode) {}
+		input = new InputSystem(controls);
+
+        input.addEventListener(InputEvent.INPUT_PRESSED, onInputPress);
+
+        input.addEventListener(InputEvent.INPUT_RELEASED, onInputRelease);
 		
 		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000;
 		
@@ -1326,6 +1313,9 @@ class PlayState extends MusicBeatState
 		#end
 		
 		audio.volume = 0;
+
+        audio.play();
+        audio.pause();
 		
 		scripts.set('vocals', audio);
 		scripts.set('inst', audio.inst);
@@ -1746,7 +1736,7 @@ class PlayState extends MusicBeatState
 		scripts.call('onUpdate', [elapsed]);
 		
 		super.update(elapsed);
-		input.update(elapsed);
+		input.update();
 		
 		if ((#if android FlxG.android.justReleased.BACK || #end controls.PAUSE) && startedCountdown && canPause)
 		{
@@ -2724,17 +2714,16 @@ class PlayState extends MusicBeatState
 		callHUDFunc(hud -> hud.popUpScore(daRating, combo, note)); // only pushing the image bc is anyone ever gonna need anything else???
 	}
 	
-	function onKeyPress(event:KeyboardEvent):Void
+	function onInputPress(event:InputEvent):Void
 	{
 		if (cpuControlled || paused || !startedCountdown) return;
 		
-		var eventKey:FlxKey = event.keyCode;
-		var key:Int = input.getKeyFromEvent(eventKey);
-		
-		if (key <= -1 || (!FlxG.keys.checkStatus(eventKey, JUST_PRESSED) && !ClientPrefs.controllerMode)) return;
+        var key:Int = event.noteData;
 		
 		var prevTime:Float = Conductor.songPosition;
 		if (audio.inst?.playing) Conductor.songPosition = @:privateAccess audio.inst._channel.position;
+        // subtract latency
+        Conductor.songPosition -= lime.system.System.getTimer() - event.timer;
 		
 		if (generatedMusic && !endingSong)
 		{
@@ -2791,15 +2780,14 @@ class PlayState extends MusicBeatState
 		
 		Conductor.songPosition = prevTime;
 		
-		scripts.call('onKeyPress', [key]);
+		scripts.call('onInputPress', [key]);
 	}
 	
-	function onKeyRelease(event:KeyboardEvent):Void
+	function onInputRelease(event:InputEvent):Void
 	{
-		var eventKey:FlxKey = event.keyCode;
-		var key:Int = input.getKeyFromEvent(eventKey);
+        var key:Int = event.noteData;
 		
-		if (startedCountdown && !paused && key > -1)
+		if (startedCountdown && !paused)
 		{
 			for (field in playFields.members)
 			{
@@ -2812,7 +2800,7 @@ class PlayState extends MusicBeatState
 					spr.resetAnim = 0;
 				}
 			}
-			scripts.call('onKeyRelease', [key]);
+			scripts.call('onInputRelease', [key]);
 		}
 	}
 	
@@ -2825,7 +2813,7 @@ class PlayState extends MusicBeatState
 
 		if (cpuControlled || paused || !startedCountdown) return;
 		
-		if (buttonCode <= -1 || (!button.justPressed && !ClientPrefs.controllerMode)) return;
+		if (buttonCode <= -1 || !button.justPressed) return;
 		
 		var prevTime:Float = Conductor.songPosition;
 		if (audio.inst?.playing) Conductor.songPosition = @:privateAccess audio.inst._channel.position;
@@ -2886,6 +2874,7 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = prevTime;
 		
 		scripts.call('onKeyPress', [buttonCode]);
+        scripts.call('onInputPress', [buttonCode]);
 		scripts.call('onButtonPress', [buttonCode]);
 	}
 
@@ -2910,6 +2899,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			scripts.call('onKeyRelease', [buttonCode]);
+            scripts.call('onInputRelease', [buttonCode]);
 			scripts.call('onButtonRelease', [buttonCode]);
 		}
 	}
@@ -2917,15 +2907,15 @@ class PlayState extends MusicBeatState
 	// Hold notes
 	function keyShit():Void
 	{
-		// HOLDING
-		var up = controls.NOTE_UP;
-		var right = controls.NOTE_RIGHT;
-		var down = controls.NOTE_DOWN;
-		var left = controls.NOTE_LEFT;
-		var dodge = controls.NOTE_DODGE;
-		
-		var controlHoldArray:Array<Bool> = [left, down, up, right, dodge];
-		
+		// HOLDING		
+        var up = controls.NOTE_UP;
+        var right = controls.NOTE_RIGHT;
+        var down = controls.NOTE_DOWN;
+        var left = controls.NOTE_LEFT;
+        var dodge = controls.NOTE_DODGE;
+                                        		
+        var controlHoldArray:Array<Bool> = [left, down, up, right, dodge];
+
 		if (startedCountdown && !boyfriend.stunned && generatedMusic)
 		{
 			// rewritten inputs???

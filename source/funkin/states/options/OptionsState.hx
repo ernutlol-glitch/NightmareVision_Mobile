@@ -26,6 +26,8 @@ class OptionsState extends MusicBeatState
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
 	
+	var justLeftSubState = false;
+	
 	public function openSelectedSubstate(label:String)
 	{
 		if (label != "Adjust Delay and Combo")
@@ -38,7 +40,8 @@ class OptionsState extends MusicBeatState
 			case 'Notes':
 				openSubState(new funkin.states.options.NoteSettingsSubState());
 			case 'Controls':
-				openSubState(new funkin.states.options.ControlsSubState());
+				final gamepad = FlxG.gamepads.getFirstActiveGamepad();
+				openSubState(new funkin.states.options.ControlsSubState(gamepad != null ? Gamepad(gamepad.id) : Keys));
 			case 'Graphics':
 				openSubState(new funkin.states.options.GraphicsSettingsSubState());
 			case 'Visuals and UI':
@@ -110,6 +113,7 @@ class OptionsState extends MusicBeatState
 		addTouchPad("UP_DOWN", "A_B_C");
 		
 		super.closeSubState();
+		justLeftSubState = true;
 	}
 	
 	override function update(elapsed:Float)
@@ -125,7 +129,7 @@ class OptionsState extends MusicBeatState
 			changeSelection(1);
 		}
 		
-		if (controls.BACK)
+		if (controls.BACK && !justLeftSubState)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			if (onPlayState)
@@ -148,6 +152,7 @@ class OptionsState extends MusicBeatState
 		}
 		
 		scriptGroup.call('onUpdatePost', [elapsed]);
+		justLeftSubState = false;
 	}
 	
 	function changeSelection(diff:Int = 0)

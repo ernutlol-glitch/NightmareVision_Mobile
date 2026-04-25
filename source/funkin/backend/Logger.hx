@@ -80,7 +80,7 @@ class Logger
 	{
 		return switch (severity)
 		{
-			case ERROR: AnsiColor.RED;
+			case ERROR: 0xffff4040;
 			
 			case WARN: AnsiColor.YELLOW;
 			

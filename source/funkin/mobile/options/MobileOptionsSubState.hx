@@ -42,7 +42,7 @@ class MobileOptionsSubState extends BaseOptionsMenu
 		title = 'Mobile Options';
 		rpcTitle = 'Mobile Options Menu'; // for Discord Rich Presence, fuck it
 
-		var option:Option = new Option('Mobile Controls', 'Choose which control to play.', '', 'button', true);
+		var option:Option = new Option('Mobile Controls', 'Choose which control to play.', '', BUTTON, true);
 		option.callback = function() {
 		    openSubState(new funkin.mobile.MobileControlSelectSubState());
 		    touchPad.active = touchPad.visible = false;
@@ -50,7 +50,7 @@ class MobileOptionsSubState extends BaseOptionsMenu
 		addOption(option);
 		
 		var option:Option = new Option('Mobile Controls Opacity',
-			'Selects the opacity for the mobile buttons (careful not to put it at 0 and lose track of your buttons).', 'controlsAlpha', 'percent', 0.6);
+			'Selects the opacity for the mobile buttons (careful not to put it at 0 and lose track of your buttons).', 'controlsAlpha', PERCENT, 0.6);
 		option.scrollSpeed = 1;
 		option.minValue = 0.001;
 		option.maxValue = 1;
@@ -64,23 +64,23 @@ class MobileOptionsSubState extends BaseOptionsMenu
 
 		#if mobile
 	    var option:Option = new Option('Allow Phone Screensaver',
-			'If checked, the phone will sleep after going inactive for few seconds.\n(The time depends on your phone\'s options)', 'screensaver', 'bool', false);
+			'If checked, the phone will sleep after going inactive for few seconds.\n(The time depends on your phone\'s options)', 'screensaver', BOOL, false);
 		option.onChange = () -> lime.system.System.allowScreenTimeout = curOption.getValue();
 		addOption(option);
 		#end
 
 		if (MobileData.mode == 3)
 		{
-			var option:Option = new Option('Hitbox Design', 'Choose how your hitbox should look like.', 'hitboxType', 'string', 'Gradient', hintOptions);
+			var option:Option = new Option('Hitbox Design', 'Choose how your hitbox should look like.', 'hitboxType', STRING, 'Gradient', hintOptions);
 			addOption(option);
 
 			var option:Option = new Option('Hitbox Position', 'If checked, the hitbox will be put at the bottom of the screen, otherwise will stay at the top.',
-				'hitboxPos', 'bool', true);
+				'hitboxPos', BOOL, true);
 			addOption(option);
 		}
 
 		#if android
-		var option:Option = new Option('Storage Type', 'Which folder Psych Engine should use?\n(CHANGING THIS MAKES DELETE YOUR OLD FOLDER!!)', 'storageType', 'string',
+		var option:Option = new Option('Storage Type', 'Which folder NightmareVision Engine should use?\n(CHANGING THIS MAKES DELETE YOUR OLD FOLDER!!)', 'storageType', STRING,
 			'EXTERNAL_DATA', storageTypes);
 		addOption(option);
 		#end
