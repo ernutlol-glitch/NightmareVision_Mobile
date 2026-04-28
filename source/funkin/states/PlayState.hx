@@ -1448,7 +1448,7 @@ class PlayState extends MusicBeatState
 					sustainNote.gfNote = swagNote.gfNote;
 					sustainNote.noteType = swagNote.noteType;
 					
-					if (ClientPrefs.guitarHeroSustains && !swagNote.hitCausesMiss && !swagNote.canMiss) sustainNote.blockHit = true; // stops you from holding a note without key pressing first
+					if (!swagNote.hitCausesMiss && !swagNote.canMiss) sustainNote.blockHit = true; // stops you from holding a note without key pressing first
 					if (!sustainNote.alive) break;
 					
 					sustainNote.ID = unspawnNotes.length;
@@ -2929,24 +2929,38 @@ class PlayState extends MusicBeatState
 						&& controlHoldArray[daNote.noteData]
 						&& Conductor.songPosition >= daNote.strumTime
 						&& !daNote.tooLate
-						&& !daNote.wasGoodHit) daNote.playField.onNoteHit.dispatch(daNote, daNote.playField);
+						&& !daNote.wasGoodHit)
+                        {
+                            daNote.parent.coyoteProgress = 0;
+                            daNote.playField.onNoteHit.dispatch(daNote, daNote.playField);
+                        }
 				}
 				
-				if (ClientPrefs.guitarHeroSustains)
+				if (!daNote.playField.autoPlayed && daNote.playField.inControl && daNote.playField.playerControls)
 				{
-					// hold note drop
 					
-					if (!daNote.playField.autoPlayed && daNote.playField.inControl && daNote.playField.playerControls)
+					if (daNote.isSustainNote
+                        && !daNote.blockHit
+                        && !daNote.ignoreNote
+                        && !input.inputPressed(daNote.noteData)
+                        && !endingSong
+                       	&& !daNote.wasGoodHit)
 					{
-						if (daNote.isSustainNote
-							&& !daNote.blockHit
-							&& !daNote.ignoreNote
-							&& !controlHoldArray[daNote.noteData]
-							&& !endingSong
-							&& (daNote.tooLate || !daNote.wasGoodHit))
+					    if (daNote.tooLate)
 						{
 							daNote.playField.onNoteMiss.dispatch(daNote, daNote.playField);
-						}
+						    combo = 0; // Repeat the miss code unconditionally because the actualMiss signal callback comes after the function that makes notes unable to miss
+                            audio.miss();
+                                                        							
+                            if (instakillOnMiss) doDeathCheck(true);
+                                                                                                               							
+                            songMisses++;
+                            if (!practiceMode) songScore -= 10;
+                                                                                                                                                                                                    							
+                            totalPlayed++;
+                       		RecalculateRating(true);
+                        };
+                        	else daNote.parent.coyoteProgress += FlxG.elapsed / 0.45;
 					}
 				}
 			});

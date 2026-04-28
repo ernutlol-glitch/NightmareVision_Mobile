@@ -80,9 +80,7 @@ class ClientPrefs
 	
 	@saveVar public static var camFollowsCharacters:Bool = true;
 	
-	// gameplay ------------------------------------------------------------------------//
-	@saveVar public static var guitarHeroSustains:Bool = true;
-	
+	// gameplay ------------------------------------------------------------------------//	
 	@saveVar public static var mechanics:Bool = true;
 	
 	@saveVar public static var modcharts:Bool = true;
